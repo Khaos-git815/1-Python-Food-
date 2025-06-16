@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Login - FlavorNest{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h1>Sign In</h1>
+        <form method="POST" action="{{ url_for('login') }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.email.label }}
+                {{ form.email(class="form-control") }}
+                {% for error in form.email.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                {{ form.password.label }}
+                {{ form.password(class="form-control") }}
+                {% for error in form.password.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <div class="remember-me">
+                    {{ form.remember_me.label }}
+                    {{ form.remember_me() }}
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+        <div class="auth-links">
+            <p><a href="{{ url_for('reset_password_request') }}">Forgot Password?</a></p>
+            <p>Don't have an account? <a href="{{ url_for('register') }}">Sign Up</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

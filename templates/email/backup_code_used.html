@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backup Code Used</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ffc107;
+            color: #212529;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Backup Code Used</h2>
+        </div>
+        <div class="content">
+            <div class="warning">
+                <strong>Security Notice:</strong> A backup code was used to access your account.
+            </div>
+            
+            <p>Hello {{ user.username }},</p>
+            
+            <p>A backup code was used to access your FlavorNest account. Here are the details:</p>
+            
+            <div class="details">
+                <p><strong>Time:</strong> {{ timestamp.strftime('%Y-%m-%d %H:%M:%S UTC') }}</p>
+                <p><strong>IP Address:</strong> {{ ip_address }}</p>
+                <p><strong>Device:</strong> {{ user_agent }}</p>
+            </div>
+            
+            <p>Important: Backup codes are meant for emergency use only. If you used this backup code, please:</p>
+            
+            <ol>
+                <li>Generate new backup codes immediately</li>
+                <li>Review your active sessions</li>
+                <li>Consider changing your password if you suspect any unauthorized access</li>
+            </ol>
+            
+            <a href="{{ url_for('account_settings', _external=True) }}" class="button">Generate New Backup Codes</a>
+            
+            <p>If you didn't use this backup code, please take immediate action:</p>
+            
+            <ol>
+                <li>Change your password immediately</li>
+                <li>Disable and re-enable two-factor authentication</li>
+                <li>Contact our support team</li>
+            </ol>
+        </div>
+        <div class="footer">
+            <p>This is an automated security notification from FlavorNest. Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html> 

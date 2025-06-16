@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Saved Recipes - FlavorNest{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Your Saved Recipes</h1>
+    
+    {% if saved_recipes %}
+        <div class="recipe-grid">
+            {% for saved_recipe in saved_recipes %}
+                <div class="recipe-card">
+                    <img src="{{ saved_recipe.image }}" alt="{{ saved_recipe.title }}" class="recipe-image">
+                    <div class="recipe-content">
+                        <h3>{{ saved_recipe.title }}</h3>
+                        <div class="recipe-actions">
+                            <a href="{{ url_for('recipe_detail', recipe_id=saved_recipe.recipe_id) }}" class="btn btn-primary">View Recipe</a>
+                            <form action="{{ url_for('unsave_recipe', recipe_id=saved_recipe.recipe_id) }}" method="POST" class="unsave-form">
+                                <button type="submit" class="btn btn-danger">Unsave</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-recipes">
+            <p>You haven't saved any recipes yet.</p>
+            <a href="{{ url_for('recipes') }}" class="btn btn-primary">Browse Recipes</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

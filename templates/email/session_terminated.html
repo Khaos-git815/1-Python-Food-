@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Session Terminated</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .info {
+            background-color: #cce5ff;
+            border: 1px solid #b8daff;
+            color: #004085;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #17a2b8;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Session Terminated</h2>
+        </div>
+        <div class="content">
+            <div class="info">
+                <strong>Notice:</strong> A session on your FlavorNest account has been terminated.
+            </div>
+            
+            <p>Hello {{ user.username }},</p>
+            
+            <p>A session on your FlavorNest account was recently terminated. Here are the details:</p>
+            
+            <div class="details">
+                <p><strong>Time:</strong> {{ timestamp.strftime('%Y-%m-%d %H:%M:%S UTC') }}</p>
+                <p><strong>Session ID:</strong> {{ session_id }}</p>
+                <p><strong>IP Address:</strong> {{ ip_address }}</p>
+                <p><strong>Device:</strong> {{ user_agent }}</p>
+            </div>
+            
+            <p>If you terminated this session, you can ignore this email. If you didn't terminate this session, please take immediate action:</p>
+            
+            <ol>
+                <li>Change your password immediately</li>
+                <li>Enable two-factor authentication if you haven't already</li>
+                <li>Review your remaining active sessions</li>
+                <li>Contact our support team if you need assistance</li>
+            </ol>
+            
+            <a href="{{ url_for('view_sessions', _external=True) }}" class="button">View Active Sessions</a>
+        </div>
+        <div class="footer">
+            <p>This is an automated security notification from FlavorNest. Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html> 

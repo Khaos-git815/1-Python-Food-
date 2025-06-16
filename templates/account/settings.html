@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Account Settings - FlavorNest{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Account Settings</h1>
+    
+    <div class="settings-section">
+        <h2>Two-Factor Authentication</h2>
+        {% if current_user.two_factor_enabled %}
+            <p>Two-factor authentication is enabled.</p>
+            <form action="{{ url_for('disable_2fa') }}" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to disable 2FA?')">
+                    Disable 2FA
+                </button>
+            </form>
+        {% else %}
+            <p>Two-factor authentication is not enabled.</p>
+            <a href="{{ url_for('setup_2fa') }}" class="btn btn-primary">Enable 2FA</a>
+        {% endif %}
+    </div>
+    
+    <div class="settings-section">
+        <h2>Change Password</h2>
+        <form method="POST" class="auth-form">
+            {{ password_form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ password_form.current_password.label }}
+                {{ password_form.current_password(class="form-control") }}
+                {% if password_form.current_password.errors %}
+                    {% for error in password_form.current_password.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ password_form.new_password.label }}
+                {{ password_form.new_password(class="form-control") }}
+                {% if password_form.new_password.errors %}
+                    {% for error in password_form.new_password.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ password_form.confirm_password.label }}
+                {{ password_form.confirm_password(class="form-control") }}
+                {% if password_form.confirm_password.errors %}
+                    {% for error in password_form.confirm_password.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            {{ password_form.submit(class="btn btn-primary") }}
+        </form>
+    </div>
+    
+    <div class="settings-section">
+        <h2>Active Sessions</h2>
+        <p>Manage your active sessions across different devices.</p>
+        <a href="{{ url_for('account_sessions') }}" class="btn btn-secondary">View Sessions</a>
+    </div>
+    
+    <div class="settings-section danger-zone">
+        <h2>Delete Account</h2>
+        <p class="text-danger">Warning: This action cannot be undone. All your data will be permanently deleted.</p>
+        
+        <form method="POST" class="auth-form">
+            {{ delete_form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ delete_form.password.label }}
+                {{ delete_form.password(class="form-control") }}
+                {% if delete_form.password.errors %}
+                    {% for error in delete_form.password.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ delete_form.confirm_text.label }}
+                {{ delete_form.confirm_text(class="form-control") }}
+                {% if delete_form.confirm_text.errors %}
+                    {% for error in delete_form.confirm_text.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            {{ delete_form.submit(class="btn btn-danger", onclick="return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone.')") }}
+        </form>
+    </div>
+</div>
+{% endblock %} 

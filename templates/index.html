@@ -1,0 +1,553 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Parallax -->
+<section class="hero parallax-section" style="background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover;">
+    <div class="hero-overlay">
+        <div class="hero-content">
+            <h1 class="animate__animated animate__fadeInDown">Discover Amazing Recipes</h1>
+            <p class="animate__animated animate__fadeInUp">Explore a world of flavors and create memorable meals with our curated collection of recipes.</p>
+            
+            <!-- Enhanced Search Bar with Autocomplete -->
+            <div class="search-container animate__animated animate__fadeInUp">
+                <form action="{{ url_for('recipes') }}" method="GET" class="search-form">
+                    <div class="input-group">
+                        <input type="text" name="q" class="form-control search-input" placeholder="Search for recipes..." aria-label="Search recipes" id="searchInput">
+                        <button class="btn btn-primary search-btn" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-suggestions" id="searchSuggestions"></div>
+                    <div class="search-tags mt-2">
+                        <span class="search-tag">Popular:</span>
+                        <a href="{{ url_for('recipes', q='pasta') }}" class="search-tag">Pasta</a>
+                        <a href="{{ url_for('recipes', q='vegetarian') }}" class="search-tag">Vegetarian</a>
+                        <a href="{{ url_for('recipes', q='dessert') }}" class="search-tag">Dessert</a>
+                        <a href="{{ url_for('recipes', q='quick') }}" class="search-tag">Quick & Easy</a>
+                        <a href="{{ url_for('recipes', q='healthy') }}" class="search-tag">Healthy</a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="d-flex justify-content-center gap-3 animate__animated animate__fadeInUp mt-4">
+                <a href="{{ url_for('recipes') }}" class="btn btn-primary btn-lg hover-grow">
+                    <i class="fas fa-utensils me-2"></i>Browse Recipes
+                </a>
+                {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg hover-grow">
+                        <i class="fas fa-user-plus me-2"></i>Join Now
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Recipes Carousel with Enhanced Controls -->
+<section class="container py-5">
+    <h2 class="text-center mb-5">Featured Recipes</h2>
+    <div id="featuredRecipesCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            {% for recipe in featured_recipes %}
+            <button type="button" data-bs-target="#featuredRecipesCarousel" data-bs-slide-to="{{ loop.index0 }}" 
+                    {% if loop.first %}class="active"{% endif %}></button>
+            {% endfor %}
+        </div>
+        <div class="carousel-inner">
+            {% for recipe in featured_recipes %}
+            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="featured-recipe-card hover-lift">
+                            <div class="row g-0">
+                                <div class="col-md-6">
+                                    <div class="featured-recipe-image">
+                                        <img loading="lazy" src="{{ recipe.image_url }}" alt="{{ recipe.title }}">
+                                        <div class="featured-recipe-overlay">
+                                            <div class="featured-recipe-tags">
+                                                {% for tag in recipe.tags %}
+                                                <span class="featured-recipe-tag">{{ tag }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="featured-recipe-content">
+                                        <h3 class="featured-recipe-title">{{ recipe.title }}</h3>
+                                        <p class="featured-recipe-description">{{ recipe.description }}</p>
+                                        <div class="featured-recipe-meta">
+                                            <span><i class="fas fa-clock"></i> {{ recipe.cook_time }}</span>
+                                            <span><i class="fas fa-fire"></i> {{ recipe.difficulty }}</span>
+                                            <span><i class="fas fa-user"></i> {{ recipe.author.username }}</span>
+                                        </div>
+                                        <div class="featured-recipe-stats">
+                                            <span><i class="fas fa-heart"></i> {{ recipe.likes_count }}</span>
+                                            <span><i class="fas fa-comment"></i> {{ recipe.comments_count }}</span>
+                                            <span><i class="fas fa-bookmark"></i> {{ recipe.saves_count }}</span>
+                                        </div>
+                                        <a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}" class="btn btn-primary mt-3 hover-grow">View Recipe</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#featuredRecipesCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#featuredRecipesCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</section>
+
+<!-- Enhanced Recipe Filtering System -->
+<section class="container py-5">
+    <h2 class="text-center mb-5">Explore Recipes</h2>
+    <div class="recipe-filters mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <select class="form-select" id="cuisineFilter">
+                    <option value="">All Cuisines</option>
+                    <option value="italian">Italian</option>
+                    <option value="asian">Asian</option>
+                    <option value="mexican">Mexican</option>
+                    <option value="mediterranean">Mediterranean</option>
+                    <option value="indian">Indian</option>
+                    <option value="american">American</option>
+                    <option value="french">French</option>
+                    <option value="thai">Thai</option>
+                    <option value="japanese">Japanese</option>
+                    <option value="korean">Korean</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="difficultyFilter">
+                    <option value="">All Difficulties</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                    <option value="expert">Expert</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="timeFilter">
+                    <option value="">Any Time</option>
+                    <option value="15">15 mins or less</option>
+                    <option value="30">30 mins or less</option>
+                    <option value="60">1 hour or less</option>
+                    <option value="120">2 hours or less</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary flex-grow-1" id="vegetarianFilter">
+                        <i class="fas fa-leaf"></i> Vegetarian
+                    </button>
+                    <button class="btn btn-outline-primary flex-grow-1" id="veganFilter">
+                        <i class="fas fa-seedling"></i> Vegan
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mt-3">
+            <div class="col-md-3">
+                <select class="form-select" id="sortFilter">
+                    <option value="popular">Most Popular</option>
+                    <option value="recent">Most Recent</option>
+                    <option value="rating">Highest Rated</option>
+                    <option value="time">Quickest</option>
+                    <option value="trending">Trending Now</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="dietFilter">
+                    <option value="">All Diets</option>
+                    <option value="gluten-free">Gluten Free</option>
+                    <option value="dairy-free">Dairy Free</option>
+                    <option value="low-carb">Low Carb</option>
+                    <option value="keto">Keto</option>
+                    <option value="paleo">Paleo</option>
+                    <option value="whole30">Whole30</option>
+                    <option value="mediterranean">Mediterranean</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="seasonFilter">
+                    <option value="">All Seasons</option>
+                    <option value="spring">Spring</option>
+                    <option value="summer">Summer</option>
+                    <option value="fall">Fall</option>
+                    <option value="winter">Winter</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary flex-grow-1" id="quickFilter">
+                        <i class="fas fa-bolt"></i> Quick & Easy
+                    </button>
+                    <button class="btn btn-outline-primary flex-grow-1" id="healthyFilter">
+                        <i class="fas fa-heart"></i> Healthy
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mt-3">
+            <div class="col-md-3">
+                <select class="form-select" id="mealTypeFilter">
+                    <option value="">All Meal Types</option>
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snack">Snack</option>
+                    <option value="dessert">Dessert</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="occasionFilter">
+                    <option value="">All Occasions</option>
+                    <option value="weeknight">Weeknight Dinner</option>
+                    <option value="weekend">Weekend Brunch</option>
+                    <option value="holiday">Holiday</option>
+                    <option value="party">Party</option>
+                    <option value="picnic">Picnic</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="cookingMethodFilter">
+                    <option value="">All Cooking Methods</option>
+                    <option value="baking">Baking</option>
+                    <option value="grilling">Grilling</option>
+                    <option value="slow-cooker">Slow Cooker</option>
+                    <option value="instant-pot">Instant Pot</option>
+                    <option value="air-fryer">Air Fryer</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary flex-grow-1" id="familyFilter">
+                        <i class="fas fa-users"></i> Family Friendly
+                    </button>
+                    <button class="btn btn-outline-primary flex-grow-1" id="budgetFilter">
+                        <i class="fas fa-dollar-sign"></i> Budget
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-4" id="filteredRecipes">
+        {% for recipe in recipes %}
+        <div class="col-md-6 col-lg-4 recipe-item" 
+             data-cuisine="{{ recipe.cuisine }}"
+             data-difficulty="{{ recipe.difficulty }}"
+             data-time="{{ recipe.cook_time_minutes }}"
+             data-vegetarian="{{ recipe.is_vegetarian }}"
+             data-vegan="{{ recipe.is_vegan }}"
+             data-diet="{{ recipe.diet_type }}"
+             data-season="{{ recipe.season }}"
+             data-quick="{{ recipe.is_quick }}"
+             data-healthy="{{ recipe.is_healthy }}"
+             data-rating="{{ recipe.rating }}"
+             data-popularity="{{ recipe.popularity }}"
+             data-meal-type="{{ recipe.meal_type }}"
+             data-occasion="{{ recipe.occasion }}"
+             data-cooking-method="{{ recipe.cooking_method }}"
+             data-family-friendly="{{ recipe.is_family_friendly }}"
+             data-budget="{{ recipe.is_budget }}">
+            <div class="recipe-card hover-lift">
+                <div class="recipe-image">
+                    <img loading="lazy" src="{{ recipe.image_url }}" alt="{{ recipe.title }}">
+                    <div class="recipe-overlay">
+                        <div class="recipe-tags">
+                            {% for tag in recipe.tags %}
+                            <span class="recipe-tag">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="recipe-content">
+                    <h3 class="recipe-title">{{ recipe.title }}</h3>
+                    <p class="recipe-description">{{ recipe.description }}</p>
+                    <div class="recipe-meta">
+                        <span><i class="fas fa-clock"></i> {{ recipe.cook_time }}</span>
+                        <span><i class="fas fa-fire"></i> {{ recipe.difficulty }}</span>
+                    </div>
+                    <div class="recipe-rating">
+                        {% for i in range(5) %}
+                        <i class="fas fa-star {% if i < recipe.rating %}text-warning{% else %}text-muted{% endif %}"></i>
+                        {% endfor %}
+                        <span class="rating-count">({{ recipe.rating_count }})</span>
+                    </div>
+                    <a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}" class="btn btn-outline-primary mt-3 hover-grow">View Recipe</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Features Section with Enhanced Animations -->
+<section class="container py-5">
+    <h2 class="text-center mb-5">Why Choose FlavorNest?</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card hover-lift">
+                <div class="feature-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h3>Discover Recipes</h3>
+                <p>Explore our vast collection of recipes from around the world.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card hover-lift">
+                <div class="feature-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>Save Favorites</h3>
+                <p>Create your personal collection of favorite recipes.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card hover-lift">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure Account</h3>
+                <p>Your account is protected with advanced security features.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Categories with Enhanced Hover Effects -->
+<section class="container py-5">
+    <h2 class="text-center mb-5">Explore Cuisines</h2>
+    <div class="row g-4">
+        {% for category in categories %}
+        <div class="col-md-4 col-lg-3">
+            <div class="category-card hover-scale">
+                <img loading="lazy" src="{{ category.image_url }}" alt="{{ category.name }}">
+                <div class="category-overlay">
+                    <h3>{{ category.name }}</h3>
+                    <p>{{ category.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Call to Action with Enhanced Animation -->
+<section class="container py-5">
+    <div class="cta-section text-center p-5 rounded-4 hover-lift">
+        <h2 class="mb-4">Ready to Start Cooking?</h2>
+        <p class="lead mb-4">Join our community of food lovers and start exploring amazing recipes today!</p>
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg hover-grow">
+            <i class="fas fa-user-plus me-2"></i>Sign Up Now
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced Recipe filtering system
+    const filters = {
+        cuisine: document.getElementById('cuisineFilter'),
+        difficulty: document.getElementById('difficultyFilter'),
+        time: document.getElementById('timeFilter'),
+        vegetarian: document.getElementById('vegetarianFilter'),
+        vegan: document.getElementById('veganFilter'),
+        sort: document.getElementById('sortFilter'),
+        diet: document.getElementById('dietFilter'),
+        season: document.getElementById('seasonFilter'),
+        quick: document.getElementById('quickFilter'),
+        healthy: document.getElementById('healthyFilter'),
+        mealType: document.getElementById('mealTypeFilter'),
+        occasion: document.getElementById('occasionFilter'),
+        cookingMethod: document.getElementById('cookingMethodFilter'),
+        family: document.getElementById('familyFilter'),
+        budget: document.getElementById('budgetFilter')
+    };
+
+    const recipeItems = document.querySelectorAll('.recipe-item');
+    let activeFilters = {
+        vegetarian: false,
+        vegan: false,
+        quick: false,
+        healthy: false,
+        family: false,
+        budget: false
+    };
+
+    function applyFilters() {
+        const cuisine = filters.cuisine.value;
+        const difficulty = filters.difficulty.value;
+        const time = parseInt(filters.time.value) || 0;
+        const diet = filters.diet.value;
+        const season = filters.season.value;
+        const sortBy = filters.sort.value;
+        const mealType = filters.mealType.value;
+        const occasion = filters.occasion.value;
+        const cookingMethod = filters.cookingMethod.value;
+
+        recipeItems.forEach(item => {
+            const itemCuisine = item.dataset.cuisine;
+            const itemDifficulty = item.dataset.difficulty;
+            const itemTime = parseInt(item.dataset.time);
+            const itemDiet = item.dataset.diet;
+            const itemSeason = item.dataset.season;
+            const itemMealType = item.dataset.mealType;
+            const itemOccasion = item.dataset.occasion;
+            const itemCookingMethod = item.dataset.cookingMethod;
+            const isVegetarian = item.dataset.vegetarian === 'true';
+            const isVegan = item.dataset.vegan === 'true';
+            const isQuick = item.dataset.quick === 'true';
+            const isHealthy = item.dataset.healthy === 'true';
+            const isFamilyFriendly = item.dataset.familyFriendly === 'true';
+            const isBudget = item.dataset.budget === 'true';
+
+            const cuisineMatch = !cuisine || itemCuisine === cuisine;
+            const difficultyMatch = !difficulty || itemDifficulty === difficulty;
+            const timeMatch = !time || itemTime <= time;
+            const dietMatch = !diet || itemDiet === diet;
+            const seasonMatch = !season || itemSeason === season;
+            const mealTypeMatch = !mealType || itemMealType === mealType;
+            const occasionMatch = !occasion || itemOccasion === occasion;
+            const cookingMethodMatch = !cookingMethod || itemCookingMethod === cookingMethod;
+            const vegetarianMatch = !activeFilters.vegetarian || isVegetarian;
+            const veganMatch = !activeFilters.vegan || isVegan;
+            const quickMatch = !activeFilters.quick || isQuick;
+            const healthyMatch = !activeFilters.healthy || isHealthy;
+            const familyMatch = !activeFilters.family || isFamilyFriendly;
+            const budgetMatch = !activeFilters.budget || isBudget;
+
+            if (cuisineMatch && difficultyMatch && timeMatch && dietMatch && seasonMatch && 
+                mealTypeMatch && occasionMatch && cookingMethodMatch && vegetarianMatch && 
+                veganMatch && quickMatch && healthyMatch && familyMatch && budgetMatch) {
+                item.style.display = '';
+                item.classList.add('animate__animated', 'animate__fadeIn');
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Sort recipes
+        const recipeContainer = document.getElementById('filteredRecipes');
+        const recipes = Array.from(recipeContainer.children);
+        
+        recipes.sort((a, b) => {
+            switch(sortBy) {
+                case 'popular':
+                    return b.dataset.popularity - a.dataset.popularity;
+                case 'rating':
+                    return b.dataset.rating - a.dataset.rating;
+                case 'time':
+                    return a.dataset.time - b.dataset.time;
+                case 'trending':
+                    return b.dataset.trending - a.dataset.trending;
+                default:
+                    return 0;
+            }
+        });
+
+        recipes.forEach(recipe => recipeContainer.appendChild(recipe));
+    }
+
+    // Add event listeners for filters
+    Object.values(filters).forEach(filter => {
+        if (filter) {
+            filter.addEventListener('change', applyFilters);
+        }
+    });
+
+    // Toggle buttons for filters
+    ['vegetarian', 'vegan', 'quick', 'healthy', 'family', 'budget'].forEach(filterType => {
+        filters[filterType].addEventListener('click', function() {
+            this.classList.toggle('active');
+            activeFilters[filterType] = this.classList.contains('active');
+            applyFilters();
+        });
+    });
+
+    // Initialize carousel with custom settings
+    const carousel = new bootstrap.Carousel(document.getElementById('featuredRecipesCarousel'), {
+        interval: 5000,
+        wrap: true,
+        keyboard: true
+    });
+
+    // Add scroll animations
+    const animateOnScroll = () => {
+        const elements = document.querySelectorAll('.feature-card, .category-card, .recipe-card');
+        elements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            const elementBottom = element.getBoundingClientRect().bottom;
+            const isVisible = (elementTop < window.innerHeight) && (elementBottom >= 0);
+            
+            if (isVisible) {
+                element.classList.add('animate__animated', 'animate__fadeInUp');
+            }
+        });
+    };
+
+    window.addEventListener('scroll', animateOnScroll);
+    animateOnScroll(); // Initial check
+
+    // Parallax effect for hero section
+    const hero = document.querySelector('.hero');
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        hero.style.backgroundPositionY = scrolled * 0.5 + 'px';
+    });
+
+    // Search autocomplete
+    const searchInput = document.getElementById('searchInput');
+    const searchSuggestions = document.getElementById('searchSuggestions');
+
+    searchInput.addEventListener('input', async (e) => {
+        const query = e.target.value;
+        if (query.length < 2) {
+            searchSuggestions.innerHTML = '';
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/search-suggestions?q=${query}`);
+            const suggestions = await response.json();
+            
+            searchSuggestions.innerHTML = suggestions.map(suggestion => `
+                <div class="suggestion-item" onclick="window.location.href='${suggestion.url}'">
+                    <i class="fas fa-search"></i>
+                    <span>${suggestion.text}</span>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error fetching suggestions:', error);
+        }
+    });
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+            searchSuggestions.innerHTML = '';
+        }
+    });
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Recipes - FlavorNest{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="search-section">
+        <h1>Discover Recipes</h1>
+        <form method="POST" action="{{ url_for('recipes') }}" class="search-form">
+            <div class="search-bar">
+                <input type="text" 
+                       name="query" 
+                       placeholder="Search for recipes..." 
+                       value="{{ query }}" 
+                       required
+                       autocomplete="off"
+                       aria-label="Search recipes">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if recipes %}
+        <div class="recipe-grid">
+            {% for recipe in recipes %}
+                <div class="recipe-card">
+                    <div class="recipe-image-container">
+                        <img src="{{ recipe.image }}" 
+                             alt="{{ recipe.title }}" 
+                             class="recipe-image"
+                             loading="lazy">
+                    </div>
+                    <div class="recipe-content">
+                        <h3>{{ recipe.title }}</h3>
+                        <div class="recipe-meta">
+                            <span class="cook-time">
+                                <i class="fas fa-clock"></i>
+                                {% if recipe.readyInMinutes %}
+                                    {{ recipe.readyInMinutes }} mins
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </span>
+                            <span class="servings">
+                                <i class="fas fa-users"></i>
+                                {{ recipe.servings }} servings
+                            </span>
+                        </div>
+                        {% if recipe.diets %}
+                            <div class="recipe-tags">
+                                {% for diet in recipe.diets[:3] %}
+                                    <span class="diet-tag">{{ diet }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}" 
+                           class="btn btn-primary">View Recipe</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if query %}
+            <div class="no-results">
+                <i class="fas fa-search fa-3x"></i>
+                <h3>No recipes found</h3>
+                <p>Try searching with different keywords or browse our random recipes.</p>
+                <a href="{{ url_for('recipes') }}" class="btn btn-primary">View Random Recipes</a>
+            </div>
+        {% else %}
+            <div class="search-prompt">
+                <i class="fas fa-utensils fa-3x"></i>
+                <h3>Start Exploring</h3>
+                <p>Search for recipes or browse our collection of random recipes.</p>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %} 

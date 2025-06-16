@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}{{ recipe.title }} - FlavorNest{% endblock %}
+
+{% block content %}
+<div class="recipe-detail">
+    <div class="recipe-header">
+        <h1>{{ recipe.title }}</h1>
+        {% if current_user.is_authenticated %}
+            {% if is_saved %}
+                <form action="{{ url_for('unsave_recipe', recipe_id=recipe.id) }}" method="POST" class="save-recipe-form">
+                    <button type="submit" class="btn btn-danger">Unsave Recipe</button>
+                </form>
+            {% else %}
+                <form action="{{ url_for('save_recipe', recipe_id=recipe.id) }}" method="POST" class="save-recipe-form">
+                    <button type="submit" class="btn btn-primary">Save Recipe</button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div class="recipe-image-container">
+        <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-image">
+    </div>
+
+    <div class="recipe-info">
+        <div class="recipe-meta">
+            <span><i class="fas fa-clock"></i> {{ recipe.readyInMinutes }} minutes</span>
+            <span><i class="fas fa-users"></i> {{ recipe.servings }} servings</span>
+            <span><i class="fas fa-star"></i> {{ recipe.spoonacularScore|round|int }}%</span>
+        </div>
+
+        <div class="recipe-summary">
+            {{ recipe.summary|safe }}
+        </div>
+
+        <div class="recipe-ingredients">
+            <h2>Ingredients</h2>
+            <ul>
+                {% for ingredient in recipe.extendedIngredients %}
+                    <li>{{ ingredient.original }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="recipe-instructions">
+            <h2>Instructions</h2>
+            {% if recipe.analyzedInstructions %}
+                {% for step in recipe.analyzedInstructions[0].steps %}
+                    <div class="instruction-step">
+                        <span class="step-number">{{ step.number }}</span>
+                        <p>{{ step.step }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>{{ recipe.instructions|safe }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Setup 2FA - FlavorNest{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1>Setup Two-Factor Authentication</h1>
+    <p>Two-factor authentication adds an extra layer of security to your account.</p>
+    <p>You'll need to install an authenticator app like Google Authenticator or Authy on your phone.</p>
+    
+    <form method="POST" class="auth-form">
+        <button type="submit" class="btn btn-primary">Begin Setup</button>
+    </form>
+</div>
+{% endblock %} 

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}FlavorNest - Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Discover Delicious Recipes</h1>
+        <p>Find and share the best recipes from around the world</p>
+        <a href="{{ url_for('recipes') }}" class="btn btn-primary">Browse Recipes</a>
+    </div>
+</section>
+
+<section class="featured-recipes">
+    <h2>Featured Recipes</h2>
+    <div class="recipe-grid">
+        {% for recipe in featured_recipes %}
+        <a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}" class="recipe-card">
+            <div class="recipe-image" style="background-image: url('{{ recipe.image }}')"></div>
+            <div class="recipe-content">
+                <h3>{{ recipe.title }}</h3>
+                <p>{{ recipe.description }}</p>
+                <div class="recipe-meta">
+                    <span class="cook-time"><i class="far fa-clock"></i> {{ recipe.cook_time }}</span>
+                    <span class="difficulty">{{ recipe.difficulty }}</span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %} 

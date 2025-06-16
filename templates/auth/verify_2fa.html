@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Verify 2FA - FlavorNest{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1>Two-Factor Authentication</h1>
+    <p>Please enter the 6-digit code from your authenticator app.</p>
+    
+    <form method="POST" class="auth-form">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.token.label }}
+            {{ form.token(class="form-control", placeholder="Enter 6-digit code") }}
+            {% if form.token.errors %}
+                {% for error in form.token.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+{% endblock %} 
