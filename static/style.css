@@ -56,7 +56,7 @@ body {
 
 /* Container */
 .container {
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
 }
 
@@ -132,6 +132,7 @@ body {
 }
 
 .recipe-card {
+    padding: 25px;
     background: white;
     border-radius: 15px;
     overflow: hidden;
@@ -186,7 +187,6 @@ body {
     text-align: center;
     margin-bottom: 3rem;
     padding: 2rem;
-    background: linear-gradient(to right, #f8f9fa, #e9ecef);
     border-radius: 15px;
 }
 
@@ -204,7 +204,7 @@ body {
 
 .search-bar {
     display: flex;
-    gap: 11rem;
+    gap: 12em;
     background: white;
     border-radius: 50px;
     transition: transform 0.3s ease;
