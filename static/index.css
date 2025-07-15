@@ -399,6 +399,20 @@
     height: 200px;
 }
 
+
+.row-g-3{
+    display: flex;
+    align-items: center;
+}
+.row-g-4{
+    display: flex;
+    align-items: center;
+}
+.row-g-5{
+    display: flex;
+    align-items: center;
+}
+
 /* Carousel Styles */
 .carousel-control-prev,
 .carousel-control-next {
@@ -485,7 +499,9 @@
 .hover-scale:hover {
     transform: scale(1.03);
 }
-
+.col-md-3{
+    padding: 0px 5px 0px 5px;
+}
 /* Responsive Styles */
 @media (max-width: 768px) {
     .hero h1 {
