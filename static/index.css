@@ -76,6 +76,10 @@
 }
 
 /* Search Bar Styles */
+
+.improved-input-group{
+    width: 300px;
+}
 .search-container {
     max-width: 600px;
     margin: 0 auto;
@@ -86,7 +90,7 @@
     padding: 1rem;
     border-radius: 50px;
     backdrop-filter: blur(10px);
-    margin-top: -55px;
+    margin-top: -30px;
 }
 
 .search-input {
