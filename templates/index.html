@@ -8,47 +8,38 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section with Parallax -->
-<section class="hero parallax-section" style="background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover;">
+<!-- Hero Section with Parallax and Enhancements -->
+<section class="hero parallax-section hero-expanded" style="background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover; position: relative;">
+    <div class="hero-gradient-overlay"></div>
     <div class="hero-overlay">
         <div class="hero-content">
             <h1 class="animate__animated animate__fadeInDown">Discover Amazing Recipes</h1>
             <p class="animate__animated animate__fadeInUp">Explore a world of flavors and create memorable meals with our curated collection of recipes.</p>
-            
             <!-- Enhanced Search Bar with Autocomplete -->
-            <div class="search-container animate__animated animate__fadeInUp">
+            <div class="search-container improved-search-container animate__animated animate__fadeInUp">
                 <form action="{{ url_for('recipes') }}" method="GET" class="search-form">
-                    <div class="input-group">
-                        <input type="text" name="q" class="form-control search-input" placeholder="Search for recipes..." aria-label="Search recipes" id="searchInput">
-                        <button class="btn btn-primary search-btn" type="submit">
+                    <div class="input-group improved-input-group">
+                        <input type="text" name="q" class="form-control search-input improved-search-input" placeholder="Search for recipes..." aria-label="Search recipes" id="searchInput">
+                        <button class="btn btn-primary search-btn improved-search-btn" type="submit">
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
-                    <div class="search-suggestions" id="searchSuggestions"></div>
-                    <div class="search-tags mt-2">
-                        <span class="search-tag">Popular:</span>
-                        <a href="{{ url_for('recipes', q='pasta') }}" class="search-tag">Pasta</a>
-                        <a href="{{ url_for('recipes', q='vegetarian') }}" class="search-tag">Vegetarian</a>
-                        <a href="{{ url_for('recipes', q='dessert') }}" class="search-tag">Dessert</a>
-                        <a href="{{ url_for('recipes', q='quick') }}" class="search-tag">Quick & Easy</a>
-                        <a href="{{ url_for('recipes', q='healthy') }}" class="search-tag">Healthy</a>
-                    </div>
                 </form>
-            </div>
-
-            <div class="d-flex justify-content-center gap-3 animate__animated animate__fadeInUp mt-4">
-                <a href="{{ url_for('recipes') }}" class="btn btn-primary btn-lg hover-grow">
-                    <i class="fas fa-utensils me-2"></i>Browse Recipes
-                </a>
-                {% if not current_user.is_authenticated %}
-                    <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg hover-grow">
-                        <i class="fas fa-user-plus me-2"></i>Join Now
-                    </a>
-                {% endif %}
             </div>
         </div>
     </div>
+    <!-- SVG Wave Divider -->
+    <div class="hero-wave-divider">
+        <svg viewBox="0 0 1440 100" width="100%" height="100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,40 C480,120 960,0 1440,80 L1440,100 L0,100 Z" fill="#fff" fill-opacity="1"></path>
+        </svg>
+    </div>
+    <!-- Scroll Down Indicator -->
+    <div class="scroll-down-indicator">
+        <span></span>
+    </div>
 </section>
+<!-- No extra margin or padding here so hero touches Explore Recipes -->
 
 <!-- Featured Recipes Carousel with Enhanced Controls -->
 <section class="container py-5">
